@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import time
 import pygame
+import json
 dijkstra = __import__('mazeSolver').dijkstra
 from pygame.locals import (
 	K_RIGHT,
@@ -51,9 +52,11 @@ def drawMaze(screen, flag):
 
 def solveMaze(screen):
 	solution = dijkstra(maze, 0, MAZEH * MAZEW - 1)
-	for i in solution:
+	solution = json.loads(solution)
+	for i in solution["path"]:
 		maze[i // MAZEW][i % MAZEW] = 2
 	print("soved\n")
+	print(solution)
 	drawMaze(screen, True)
 
 

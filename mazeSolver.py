@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """dijkstra map solverrrr
-solver = {pos -> (width of maze * j - (width of maze - i) ): (dist, prev, [next])}
+solver = {pos : (dist, prev, [next])}
 """
+import json
+
 def dijkstra(maze, start, end):
 	width = len(maze[0])
 	height = len(maze)
@@ -21,13 +23,60 @@ def dijkstra(maze, start, end):
 					queue.append(pos)
 				if dist == solver[pos][0]:
 					solver[pos][2].append(current)
+	""" if i of past ind == i of current ind pass
+	else if past i less current i then instruction is L else inst is R
+	then handle rotation
+	"""
 	path = []
 	current = end
 	i = 0
 	while current is not None and i < len(solver.keys()):
 		path.append(current)
 		current = solver[current][1]
-	return path[::-1]
+		i+=1
+	path = path[::-1]
+	ang_of_rotations = [0]
+	instructions = []
+	prev = path[0]
+	for current in path:
+		getDir(prev, current, ang_of_rotations, instructions, width)
+		prev = current
+
+	return json.dumps({"path": path[:], "instructions": instructions[:]})
+
+def getDir(prev, current, ang_of_rotations, instructions, width):
+	prev_i = prev // width
+	prev_j = prev % width
+	current_i = current // width
+	current_j = current % width
+	if prev_i == current_i:
+		if prev_j > current_j:
+			if ang_of_rotations[0] == 1:
+				instructions.append("R")
+			elif ang_of_rotations[0] == 3:
+				instructions.append("L")
+			ang_of_rotations[0] = 2
+		elif prev_j < current_j:
+			if ang_of_rotations[0] == 1:
+				instructions.append("L")
+			elif ang_of_rotations[0] == 3:
+				instructions.append("R")
+			ang_of_rotations[0] = 0
+	elif prev_j == current_j:
+		if prev_i > current_i:
+			if ang_of_rotations[0] == 0:
+				instructions.append("L")
+			elif ang_of_rotations[0] == 2:
+				instructions.append("R")
+			ang_of_rotations[0] = 3
+		elif prev_i < current_i:
+			if ang_of_rotations[0] == 0:
+				instructions.append("R")
+			elif ang_of_rotations[0] == 2:
+				instructions.append("L")
+			ang_of_rotations[0] = 1
+
+
 
 if __name__ == '__main__':
 	pass
