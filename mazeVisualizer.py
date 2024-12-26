@@ -15,17 +15,15 @@ from pygame.locals import (
 	K_KP_ENTER
 )
 
-SCREEN_WIDTH = 800
-SCREEN_HIEGHT = 600
+
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 BLUE = (0,0,255)
-BLOCKSIZE = 20
-MAZEW = int(SCREEN_WIDTH / BLOCKSIZE)
-MAZEH = int(SCREEN_HIEGHT / BLOCKSIZE)
-maze = [[0 for _ in range(MAZEW)] for _ in range(MAZEH)]
+BLOCKSIZE = 1
 
-def drawMaze(screen, flag):
+maze = [[0 for _ in range(800//20)] for _ in range(600//20)]
+
+def drawMaze(screen):
 	while True:
 		if not maze:
 			return
@@ -50,19 +48,21 @@ def drawMaze(screen, flag):
 		pygame.display.flip()
 
 
-def solveMaze(screen):
-	solution = dijkstra(maze, 0, MAZEH * MAZEW - 1)
+def solveMaze(screen, maze):
+	mazew = len(maze[0])
+	mazeh = len(maze)
+	solution = dijkstra(maze, 0,  mazew * mazeh - 21)
 	solution = json.loads(solution)
 	for i in solution["path"]:
-		maze[i // MAZEW][i % MAZEW] = 2
+		maze[i // mazew][i % mazeh] = 2
 	print("soved\n")
 	print(solution)
-	drawMaze(screen, True)
+	drawMaze(screen)
 
 
 if __name__ == '__main__':
 	pygame.init()
-	screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HIEGHT])
-	drawMaze(screen, False)
-	solveMaze(screen)
+	screen = pygame.display.set_mode([800, 600])
+	drawMaze(screen)
+	solveMaze(screen, maze)
 	pygame.quit()
