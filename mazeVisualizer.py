@@ -19,31 +19,35 @@ from pygame.locals import (
 WHITE = (255, 255, 255)
 BLACK = (0,0,0)
 BLUE = (0,0,255)
-BLOCKSIZE = 1
+BLOCKSIZE = 100
 
 
 def drawMaze(screen, maze, flag=False):
 	counter = 0
-	StoE = (0, len(maze) *len(maze[0]) - 1)
+	SandE = [(0,0), (len(maze) - 1, len(maze[0]) -1)]
 	while True:
 		if not maze:
 			return
 		for event in pygame.event.get():
-			if event.type == QUIT:
+			if event.type == QUIT and not flag:
 				return maze
-			if (event.type == KEYDOWN):
+			if (event.type == KEYDOWN) and not flag:
 				if event.key == K_KP_ENTER:
 					return maze
 
 			if event.type == MOUSEBUTTONDOWN:
 				pos = pygame.mouse.get_pos()
-				if flag:
+				if not flag:
 					maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)] = int(not maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)])
 				else:
 					if counter >= 2:
-						return StoE
+						maze[SandE[0][0]][SandE[0][1]] = 0
+						maze[SandE[1][0]][SandE[1][1]] = 0
+						return SandE
 					else:
-						StoE[counter] = int(pos[1]/BLOCKSIZE), int(pos[0]/BLOCKSIZE)
+						SandE[counter] = int(pos[1]/BLOCKSIZE), int(pos[0]/BLOCKSIZE)
+						counter += 1
+					maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)] = 2
 
 		for i in range(len(maze)):
 			for j in range(len(maze[0])):
@@ -56,12 +60,12 @@ def drawMaze(screen, maze, flag=False):
 		pygame.display.flip()
 
 def isTheMazeCorrect(screen, maze):
-	write_text(screen, "click to toggle wrong walls", (5,5))
+	pygame.display.set_caption("click to toggle wrong walls")
 	drawMaze(screen, maze)
 	return maze
 
 def putStartAndEnd(screen, maze):
-	write_text(screen, "click on start and end nodes respectevly", (5,5))
+	pygame.display.set_caption("click on start and end nodes respectevly")
 	return drawMaze(screen, maze, True)
 
 def solveMaze(screen, maze,start,end):
@@ -73,7 +77,7 @@ def solveMaze(screen, maze,start,end):
 		maze[i // mazew][i % mazeh] = 2
 	print("soved\n")
 	print(solution)
-	drawMaze(screen)
+	drawMaze(screen, maze)
 
 
 def createScreen(maze, blockSize =20):
@@ -86,23 +90,17 @@ def quitScreen():
 	pygame.quit()
 
 
-def write_text(screen, text, position, font_size=30, color=BLACK):
-    font = pygame.font.Font(None, font_size)
-    text_surface = font.render(text, True, color)
-    screen.blit(text_surface, position)
-    pygame.display.flip()
-
-
 if __name__ == '__main__':
 # Example maze for testing
 	maze = [[0, 0, 1, 0],
 			[1, 0, 1, 0],
 			[0, 0, 0, 0],
 			[1, 1, 1, 0]]
-
-	screen = createScreen(maze)
+	screen = createScreen(maze,100)
 	maze = isTheMazeCorrect(screen, maze)
-	start, end = putStartAndEnd(screen, maze)
-	print(start, end)
+	startAndEndPoints = putStartAndEnd(screen, maze)
+	start = startAndEndPoints[0][0] * len(maze[0]) + startAndEndPoints[0][1]
+	end = startAndEndPoints[1][0] * len(maze[0]) + startAndEndPoints[1][1]
+	print("start is ", start, end)
 	solveMaze(screen,maze, start, end)
 	quitScreen()
