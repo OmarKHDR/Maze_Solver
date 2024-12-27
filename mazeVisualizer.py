@@ -21,9 +21,10 @@ BLACK = (0,0,0)
 BLUE = (0,0,255)
 BLOCKSIZE = 1
 
-maze = [[0 for _ in range(800//20)] for _ in range(600//20)]
 
-def drawMaze(screen):
+def drawMaze(screen, maze, flag=False):
+	counter = 0
+	StoE = (0, len(maze) *len(maze[0]) - 1)
 	while True:
 		if not maze:
 			return
@@ -36,7 +37,14 @@ def drawMaze(screen):
 
 			if event.type == MOUSEBUTTONDOWN:
 				pos = pygame.mouse.get_pos()
-				maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)] = 1
+				if flag:
+					maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)] = int(not maze[int(pos[1]/BLOCKSIZE)][int(pos[0]/BLOCKSIZE)])
+				else:
+					if counter >= 2:
+						return StoE
+					else:
+						StoE[counter] = int(pos[1]/BLOCKSIZE), int(pos[0]/BLOCKSIZE)
+
 		for i in range(len(maze)):
 			for j in range(len(maze[0])):
 				if maze[i][j] == 1:
@@ -47,11 +55,19 @@ def drawMaze(screen):
 					pygame.draw.rect(screen, BLUE, (j * BLOCKSIZE, i * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
 		pygame.display.flip()
 
+def isTheMazeCorrect(screen, maze):
+	write_text(screen, "click to toggle wrong walls", (5,5))
+	drawMaze(screen, maze)
+	return maze
 
-def solveMaze(screen, maze):
+def putStartAndEnd(screen, maze):
+	write_text(screen, "click on start and end nodes respectevly", (5,5))
+	return drawMaze(screen, maze, True)
+
+def solveMaze(screen, maze,start,end):
 	mazew = len(maze[0])
 	mazeh = len(maze)
-	solution = dijkstra(maze, 0,  mazew * mazeh - 21)
+	solution = dijkstra(maze, start, end)
 	solution = json.loads(solution)
 	for i in solution["path"]:
 		maze[i // mazew][i % mazeh] = 2
@@ -60,9 +76,33 @@ def solveMaze(screen, maze):
 	drawMaze(screen)
 
 
-if __name__ == '__main__':
+def createScreen(maze, blockSize =20):
 	pygame.init()
-	screen = pygame.display.set_mode([800, 600])
-	drawMaze(screen)
-	solveMaze(screen, maze)
+	BLOCKSIZE = blockSize
+	screen = pygame.display.set_mode([len(maze[0]) * BLOCKSIZE , len(maze) * BLOCKSIZE])
+	return screen
+
+def quitScreen():
 	pygame.quit()
+
+
+def write_text(screen, text, position, font_size=30, color=BLACK):
+    font = pygame.font.Font(None, font_size)
+    text_surface = font.render(text, True, color)
+    screen.blit(text_surface, position)
+    pygame.display.flip()
+
+
+if __name__ == '__main__':
+# Example maze for testing
+	maze = [[0, 0, 1, 0],
+			[1, 0, 1, 0],
+			[0, 0, 0, 0],
+			[1, 1, 1, 0]]
+
+	screen = createScreen(maze)
+	maze = isTheMazeCorrect(screen, maze)
+	start, end = putStartAndEnd(screen, maze)
+	print(start, end)
+	solveMaze(screen,maze, start, end)
+	quitScreen()

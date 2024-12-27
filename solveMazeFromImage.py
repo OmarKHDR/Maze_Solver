@@ -1,5 +1,5 @@
 from findMaze import maze_to_array 
-from mazeVisualizer import solveMaze
+# from mazeVisualizer import solveMaze
 from mazeSolver import dijkstra
 import json
 import matplotlib.pyplot as plt
