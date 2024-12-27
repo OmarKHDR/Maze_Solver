@@ -92,10 +92,10 @@ def quitScreen():
 
 if __name__ == '__main__':
 # Example maze for testing
-	maze = [[0, 0, 1, 0],
-			[1, 0, 1, 0],
-			[0, 0, 0, 0],
-			[1, 1, 1, 0]]
+	maze = [[0, 0, 1],
+			[1, 0, 1],
+			[0, 0, 0],
+			[1, 1, 1]]
 	screen = createScreen(maze,100)
 	maze = isTheMazeCorrect(screen, maze)
 	startAndEndPoints = putStartAndEnd(screen, maze)
