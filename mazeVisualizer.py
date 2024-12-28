@@ -25,6 +25,7 @@ BLOCKSIZE = 100
 def drawMaze(screen, maze, flag=False):
 	counter = 0
 	SandE = [(0,0), (len(maze) - 1, len(maze[0]) -1)]
+	global BLOCKSIZE
 	while True:
 		if not maze:
 			return
@@ -34,7 +35,10 @@ def drawMaze(screen, maze, flag=False):
 			if (event.type == KEYDOWN) and not flag:
 				if event.key == K_KP_ENTER:
 					return maze
-
+			if event.type == pygame.VIDEORESIZE:
+				new_block_size_width = event.w // len(maze[0])
+				new_block_size_height = event.h // len(maze)
+				BLOCKSIZE = min(new_block_size_width, new_block_size_height)
 			if event.type == MOUSEBUTTONDOWN:
 				pos = pygame.mouse.get_pos()
 				if not flag:
@@ -73,17 +77,19 @@ def solveMaze(screen, maze,start,end):
 	mazeh = len(maze)
 	solution = dijkstra(maze, start, end)
 	solution = json.loads(solution)
+	print(solution)
 	for i in solution["path"]:
-		maze[i // mazew][i % mazeh] = 2
+		maze[i // mazew][i % mazew] = 2
 	print("soved\n")
 	print(solution)
 	drawMaze(screen, maze)
+	return
 
 
 def createScreen(maze, blockSize =20):
 	pygame.init()
 	BLOCKSIZE = blockSize
-	screen = pygame.display.set_mode([len(maze[0]) * BLOCKSIZE , len(maze) * BLOCKSIZE])
+	screen = pygame.display.set_mode([len(maze[0]) * BLOCKSIZE , len(maze) * BLOCKSIZE], pygame.RESIZABLE)
 	return screen
 
 def quitScreen():

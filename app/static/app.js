@@ -1,15 +1,27 @@
 let mazePromise;
 let maze;
+let solution;
+let pos = 0;
+
 window.onload = () => {
 	fetch('/getmaze')
 		.then(res => res.json())
 		.then(data => {
 			maze = data;
 			console.log('Maze loaded:', maze);
+			showNotification('loaded maze successfully')
 		})
 		.catch(err => {
 			console.log(err);
 		});
+	
+	fetch('/solveMaze')
+	.then(res => res.json())
+	.then(data => {
+		solution = JSON.parse(data);
+		console.log("solution loaded:", solution);
+		showNotification('loaded solution successfully');
+	})
 }
 
 const btn = document.getElementById('btn1')
@@ -18,6 +30,32 @@ btn.addEventListener('click', () => {
 		createMaze(maze);
 	} else {
 		alert("try again: maze didn't load yet!")
+	}
+})
+
+const btn2 = document.getElementById('btn2');
+btn2.addEventListener('click', () => {
+	if(solution && maze) {
+		fetch('/getPos')
+		.then(res => {
+			console.log(res);
+			return res.json()
+		})
+		.then(res => parseInt(res))
+		.then(realPos => {
+			for(let l = pos; l < realPos; l++) {
+				index = solution.path[l];
+				i = parseInt(index / maze[0].length);
+				j = parseInt(index % maze[0].length);
+				maze[i][j] = 2;
+			}
+			pos = realPos;
+			console.log(realPos)
+			btn.click()
+		})
+
+	} else {
+		alert("try again after few sec")
 	}
 })
 
@@ -64,4 +102,23 @@ function findPath() {
 	.then(res => {
 		console.log(res)
 	})
+}
+
+function showNotification(message, isError = false) {
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    if (isError) {
+        notification.style.backgroundColor = '#e74c3c'; // Red for errors
+    }
+    notification.innerText = message;
+    container.appendChild(notification);
+
+    // Automatically hide the notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => {
+            container.removeChild(notification);
+        }, 500); // Wait for the fade-out transition to complete
+    }, 3000);
 }
