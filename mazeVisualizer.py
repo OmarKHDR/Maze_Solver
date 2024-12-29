@@ -35,6 +35,8 @@ def drawMaze(screen, maze, flag=False):
 			if (event.type == KEYDOWN) and not flag:
 				if event.key == K_KP_ENTER:
 					return maze
+				if event.key == K_ESCAPE:
+					return None
 			if event.type == pygame.VIDEORESIZE:
 				new_block_size_width = event.w // len(maze[0])
 				new_block_size_height = event.h // len(maze)
@@ -65,7 +67,9 @@ def drawMaze(screen, maze, flag=False):
 
 def isTheMazeCorrect(screen, maze):
 	pygame.display.set_caption("click to toggle wrong walls")
-	drawMaze(screen, maze)
+	res = drawMaze(screen, maze)
+	if res == None:
+		return None
 	return maze
 
 def putStartAndEnd(screen, maze):

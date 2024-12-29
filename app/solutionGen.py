@@ -11,19 +11,19 @@ array = maze_to_array("./maze2.png").tolist()
 screen = createScreen(array, 40)
 
 array = isTheMazeCorrect(screen, array)
+if array != None:
+	with open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__), "./database/maze.json"))}', 'w') as file:
+		json.dump(array, file)
 
-with open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__), "./database/maze.json"))}', 'w') as file:
-	json.dump(array, file)
+	startAndEndPoints = putStartAndEnd(screen, array)
 
-startAndEndPoints = putStartAndEnd(screen, array)
+	start = startAndEndPoints[0][0] * len(array[0]) + startAndEndPoints[0][1]
 
-start = startAndEndPoints[0][0] * len(array[0]) + startAndEndPoints[0][1]
+	end = startAndEndPoints[1][0] * len(array[0]) + startAndEndPoints[1][1]
 
-end = startAndEndPoints[1][0] * len(array[0]) + startAndEndPoints[1][1]
+	quitScreen()
 
-quitScreen()
+	solution = dijkstra(array, start, end)
 
-solution = dijkstra(array, start, end)
-
-with open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__), "./database/solution.json"))}', 'w') as file:
-	json.dump(solution, file)
+	with open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__), "./database/solution.json"))}', 'w') as file:
+		json.dump(solution, file)
