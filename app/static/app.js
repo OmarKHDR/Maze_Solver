@@ -43,11 +43,17 @@ btn2.addEventListener('click', () => {
 		})
 		.then(res => parseInt(res))
 		.then(realPos => {
+			let k = 0;
 			for(let l = pos; l < realPos; l++) {
-				index = solution.path[l];
-				i = parseInt(index / maze[0].length);
-				j = parseInt(index % maze[0].length);
-				maze[i][j] = 2;
+				index = solution.stopPoints[l];
+				do {
+					index2 = solution.path[k]
+					i = parseInt(index2 / maze[0].length);
+					j = parseInt(index2 % maze[0].length);
+					maze[i][j] = 2;
+					k++;
+					console.log('k= ', k, ', index2 =', index2, ", index=",index)
+				} while (index != index2)
 			}
 			pos = realPos;
 			console.log(realPos)

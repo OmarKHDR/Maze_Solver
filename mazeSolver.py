@@ -37,14 +37,15 @@ def dijkstra(maze, start, end):
 	path = path[::-1]
 	ang_of_rotations = [0]
 	instructions = []
+	stopPoints = []
 	prev = path[0]
 	for current in path:
-		getDir(prev, current, ang_of_rotations, instructions, width)
+		getDir(prev, current, ang_of_rotations, instructions, width, stopPoints)
 		prev = current
 
-	return json.dumps({"path": path[:], "instructions": instructions[:]})
+	return json.dumps({"path": path[:], "instructions": instructions[:], "stopPoints": stopPoints[:]})
 
-def getDir(prev, current, ang_of_rotations, instructions, width):
+def getDir(prev, current, ang_of_rotations, instructions, width,stopPoints):
 	prev_i = prev // width
 	prev_j = prev % width
 	current_i = current // width
@@ -53,27 +54,35 @@ def getDir(prev, current, ang_of_rotations, instructions, width):
 		if prev_j > current_j:
 			if ang_of_rotations[0] == 1:
 				instructions.append("R")
+				stopPoints.append(prev)
 			elif ang_of_rotations[0] == 3:
 				instructions.append("L")
+				stopPoints.append(prev)
 			ang_of_rotations[0] = 2
 		elif prev_j < current_j:
 			if ang_of_rotations[0] == 1:
+				stopPoints.append(prev)
 				instructions.append("L")
 			elif ang_of_rotations[0] == 3:
 				instructions.append("R")
+				stopPoints.append(prev)
 			ang_of_rotations[0] = 0
 	elif prev_j == current_j:
 		if prev_i > current_i:
 			if ang_of_rotations[0] == 0:
 				instructions.append("L")
+				stopPoints.append(prev)
 			elif ang_of_rotations[0] == 2:
 				instructions.append("R")
+				stopPoints.append(prev)
 			ang_of_rotations[0] = 3
 		elif prev_i < current_i:
 			if ang_of_rotations[0] == 0:
 				instructions.append("R")
+				stopPoints.append(prev)
 			elif ang_of_rotations[0] == 2:
 				instructions.append("L")
+				stopPoints.append(prev)
 			ang_of_rotations[0] = 1
 
 
