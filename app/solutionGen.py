@@ -6,7 +6,11 @@ from findMaze import maze_to_array
 from mazeSolver import dijkstra
 from mazeVisualizer import isTheMazeCorrect, putStartAndEnd, createScreen, quitScreen
 
-array = maze_to_array("./maze2.png").tolist()
+if len(sys.argv) > 1 and sys.argv[1] != '':
+	image_name = sys.argv[1]
+else:
+	image_name = "./maze2.png"
+array = maze_to_array(image_name).tolist()
 
 screen = createScreen(array, 40)
 

@@ -46,24 +46,26 @@ btn2.addEventListener('click', () => {
 			let k = 0;
 			for(let l = pos; l < realPos; l++) {
 				index = solution.stopPoints[l];
+				if (index === undefined) break;
 				do {
 					index2 = solution.path[k]
 					i = parseInt(index2 / maze[0].length);
 					j = parseInt(index2 % maze[0].length);
 					maze[i][j] = 2;
 					k++;
-					console.log('k= ', k, ', index2 =', index2, ", index=",index)
-				} while (index != index2)
+					// console.log('k= ', k, ', index2 =', index2, ", index=",index, realPos)
+				} while (index != index2 && k < solution.path.length)
 			}
 			pos = realPos;
 			console.log(realPos)
 			btn.click()
 		})
-
 	} else {
 		alert("try again after few sec")
 	}
 })
+
+setInterval()
 
 function createMaze(maze) {
 	const c = getCanvasContext();

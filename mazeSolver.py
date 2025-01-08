@@ -43,7 +43,7 @@ def dijkstra(maze, start, end):
 		getDir(prev, current, ang_of_rotations, instructions, width, stopPoints)
 		prev = current
 
-	return json.dumps({"path": path[:], "instructions": instructions[:], "stopPoints": stopPoints[:]})
+	return json.dumps({"path": path[:], "instructions": instructions[:], "stopPoints": stopPoints[:], "instructionString": "".join(instructions)})
 
 def getDir(prev, current, ang_of_rotations, instructions, width,stopPoints):
 	prev_i = prev // width
