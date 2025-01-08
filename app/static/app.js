@@ -36,36 +36,20 @@ btn.addEventListener('click', () => {
 const btn2 = document.getElementById('btn2');
 btn2.addEventListener('click', () => {
 	if(solution && maze) {
-		fetch('/getPos')
-		.then(res => {
-			console.log(res);
-			return res.json()
-		})
-		.then(res => parseInt(res))
-		.then(realPos => {
-			let k = 0;
-			for(let l = pos; l < realPos; l++) {
-				index = solution.stopPoints[l];
-				if (index === undefined) break;
-				do {
-					index2 = solution.path[k]
-					i = parseInt(index2 / maze[0].length);
-					j = parseInt(index2 % maze[0].length);
-					maze[i][j] = 2;
-					k++;
-					// console.log('k= ', k, ', index2 =', index2, ", index=",index, realPos)
-				} while (index != index2 && k < solution.path.length)
-			}
-			pos = realPos;
-			console.log(realPos)
-			btn.click()
-		})
+		for (let k = 0; k < solution.path.length; k++){
+			console.log(k, solution.path[k])
+			index2 = solution.path[k]
+			i = parseInt(index2 / maze[0].length);
+			j = parseInt(index2 % maze[0].length);
+			maze[i][j] = 2;
+		}
+		btn1.click()
+		// console.log('k= ', k, ', index2 =', index2, ", index=",index, realPos)
 	} else {
 		alert("try again after few sec")
 	}
 })
 
-setInterval()
 
 function createMaze(maze) {
 	const c = getCanvasContext();
